@@ -1,7 +1,7 @@
 import java.util.*;
 
 class LMS {
-    private String hello12;
+    private String heseffgewsllo12;
 
     private Map<String, User> users;
     private List<String> courseMaterials;
