@@ -46,6 +46,9 @@ class LMS {
     public void viewAcademicCalendar() {
         for (Map.Entry<String, String> entry : academicCalendar.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
+
+
+
         }
     }
 
