@@ -19,12 +19,12 @@ class LMS {
         users.put(user.username, user);
     }
 
-    public void authenticate(String username, String password) {
+    public User authenticate(String username, String password) {
         User user = users.get(username);
-        if (user != null && user.password.equals(password)) {
-            user.login();
+        if (user != null && user.checkPassword(password)) {
+            return user;
         } else {
-            System.out.println("Authentication failed for " + username);
+            return null;
         }
     }
 
@@ -32,42 +32,31 @@ class LMS {
         courseMaterials.add(material);
     }
 
-    public void viewCourseMaterials() {
-        for (String material : courseMaterials) {
-            System.out.println(material);
-        }
+    public List<String> getCourseMaterials() {
+        return courseMaterials;
     }
 
     public void addEventToCalendar(String date, String event) {
         academicCalendar.put(date, event);
     }
 
-    public void viewAcademicCalendar() {
-        for (Map.Entry<String, String> entry : academicCalendar.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-
-
-
-        }
+    public Map<String, String> getAcademicCalendar() {
+        return academicCalendar;
     }
 
     public void uploadAssignment(String studentUsername, String assignment) {
         assignments.put(studentUsername, assignment);
     }
 
-    public void viewAssignments() {
-        for (Map.Entry<String, String> entry : assignments.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
+    public Map<String, String> getAssignments() {
+        return assignments;
     }
 
     public void addExamGrade(String studentUsername, String grade) {
         examGrades.put(studentUsername, grade);
     }
 
-    public void viewGrades() {
-        for (Map.Entry<String, String> entry : examGrades.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
+    public Map<String, String> getExamGrades() {
+        return examGrades;
     }
 }
