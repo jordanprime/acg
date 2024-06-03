@@ -1,12 +1,29 @@
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 abstract class User {
     String username;
-    String password;
+    String hashedPassword;
     String name;
 
     public User(String username, String password, String name) {
         this.username = username;
-        this.password = password;
+        this.hashedPassword = hashPassword(password);
         this.name = name;
+    }
+
+    private String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(password.getBytes());
+            return Base64.getEncoder().encodeToString(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-256 algorithm not found", e);
+        }
+    }
+
+    public boolean checkPassword(String password) {
+        return this.hashedPassword.equals(hashPassword(password));
     }
 
     public abstract void login();
