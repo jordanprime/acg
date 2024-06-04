@@ -16,7 +16,7 @@ class LMS {
     }
 
     public void addUser(User user) {
-        users.put(user.username, user);
+        users.put(user.getUsername(), user);
     }
 
     public User authenticate(String username, String password) {
