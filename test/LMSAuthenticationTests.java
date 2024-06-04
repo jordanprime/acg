@@ -17,17 +17,27 @@ class LMSAuthenticationTests {
 
         LMS lms = new LMS();
         Student student1 = new Student(username, password, name);
-        lms.addUser(student1);
-        User loggedInUser = lms.authenticate(username, password);
-        loggedInUser.login();
+//        User loggedInUser = lms.authenticate(username, password);
+        Session session = lms.authenticate(username, password);
+//        lms.login();
+
+//        assertAll("Multiple Assertions",
+//                () -> assertNotNull(lms.authenticate(username, password), "Test authentication with correct username and password."),
+//                () -> assertNull(lms.authenticate(username, "incorrectpassword"), "Test authentication with correct username and incorrect password."),
+//                () -> assertNull(lms.authenticate("incorrectusername", password), "Test authentication with incorrect username and incorrect password."),
+//                () -> assertEquals(username, loggedInUser.getUsername(), "The stored username in the LMS matches"),
+//                () -> assertEquals(name, loggedInUser.getName(), "The stored name in the LMS matches")
+//                () -> assertNotEquals(password, loggedInUser.hashedPassword, "God forbid the LMS returned the plain-text password"),
+//                () -> assertNull(loggedInUser.hashedPassword, "God forbid the LMS returns the stored password hash! This is awful.")
+//        );
 
         assertAll("Multiple Assertions",
                 () -> assertNotNull(lms.authenticate(username, password), "Test authentication with correct username and password."),
                 () -> assertNull(lms.authenticate(username, "incorrectpassword"), "Test authentication with correct username and incorrect password."),
                 () -> assertNull(lms.authenticate("incorrectusername", password), "Test authentication with incorrect username and incorrect password."),
-                () -> assertEquals(username, loggedInUser.getUsername(), "The stored username in the LMS matches"),
-                () -> assertEquals(name, loggedInUser.getName(), "The stored name in the LMS matches")
-//                () -> assertNotEquals(password, loggedInUser.hashedPassword, "God forbid the LMS returned the plain-text password"),
+                () -> assertEquals(username, session.getUsername(), "The stored username in the LMS matches"),
+                () -> assertEquals(name, session.getName(), "The stored name in the LMS matches")
+//                () -> assertNotEquals(ploggedInUserassword, loggedInUser.hashedPassword, "God forbid the LMS returned the plain-text password"),
 //                () -> assertNull(loggedInUser.hashedPassword, "God forbid the LMS returns the stored password hash! This is awful.")
         );
 
@@ -43,16 +53,17 @@ class LMSAuthenticationTests {
 
         LMS lms = new LMS();
         AcademicStaff staff1 = new AcademicStaff(username, password, name);
-        lms.addUser(staff1);
-        User loggedInUser = lms.authenticate(username, password);
-        loggedInUser.login();
+//        lms.addUser(staff1);
+        //User loggedInUser = lms.authenticate(username, password);
+        Session session = lms.authenticate(username, password);
+        //loggedInUser.login();
 
         assertAll("Multiple Assertions",
                 () -> assertNotNull(lms.authenticate(username, password), "Test authentication with correct username and password."),
                 () -> assertNull(lms.authenticate(username, "incorrectpassword"), "Test authentication with correct username and incorrect password."),
                 () -> assertNull(lms.authenticate("incorrectusername", password), "Test authentication with correct username and incorrect password."),
-                () -> assertEquals(username, loggedInUser.getUsername(), "The stored username in the LMS matches."),
-                () -> assertEquals(name, loggedInUser.getName(), "The stored name in the LMS matches.")
+                () -> assertEquals(username, session.getUsername(), "The stored username in the LMS matches."),
+                () -> assertEquals(name, session.getName(), "The stored name in the LMS matches.")
 //                () -> assertNotEquals(password, loggedInUser.hashedPassword, "God forbid the LMS returned the plain-text password."),
 //                () -> assertNull(loggedInUser.hashedPassword, "God forbid the LMS returns the stored password hash! This is awful.")
         );
@@ -69,9 +80,11 @@ class LMSAuthenticationTests {
 
         LMS lms = new LMS();
         Student student1 = new Student(username, password, name);
-        lms.addUser(student1);
-        User loggedInUser = lms.authenticate(username, password);
-        loggedInUser.logout();
+//        lms.addUser(student1);
+        Session session = lms.authenticate(username, password);
+        session.invalidate();
+//        User loggedInUser = lms.authenticate(username, password);
+//        loggedInUser.logout();
 
     }
 
@@ -85,9 +98,11 @@ class LMSAuthenticationTests {
 
         LMS lms = new LMS();
         AcademicStaff staff1 = new AcademicStaff(username, password, name);
-        lms.addUser(staff1);
-        User loggedInUser = lms.authenticate(username, password);
-        loggedInUser.logout();
+//        lms.addUser(staff1);
+//        User loggedInUser = lms.authenticate(username, password);
+//        loggedInUser.logout();
+        Session session = lms.authenticate(username, password);
+        session.invalidate();
 
     }
 

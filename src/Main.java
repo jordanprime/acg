@@ -17,24 +17,31 @@ public class Main {
     //in order to outline the detailed working of your solution.
 
     public static void main(String[] args) {
+
+        // Sample usage
         LMS lms = new LMS();
+//        User student = new Student("student1", "password123", "John Doe");
+//        lms.addUser(student);
 
-        Student student1 = new Student("john_doe", "password123", "John Doe");
-        AcademicStaff staff1 = new AcademicStaff("prof_smith", "password456", "Prof. Smith");
+        // Admin authenticates with the LMS
+        Session session = lms.authenticate("admin", "password");
 
-        lms.addUser(student1);
-        lms.addUser(staff1);
+        // Add some course material
+        lms.addCourseMaterial(session,"Course Material 1");
+        lms.addCourseMaterial(session, "Course Material 2");
 
-        lms.addCourseMaterial("Course Material 1");
-        lms.addCourseMaterial("Course Material 2");
+        // Add an event to the calendar
+        lms.addEventToCalendar(session,"2024-06-01", "Assignment 1 Due");
+        lms.addEventToCalendar(session, "2024-06-15", "Midterm Exam");
 
-        lms.addEventToCalendar("2024-06-01", "Assignment 1 Due");
-        lms.addEventToCalendar("2024-06-15", "Midterm Exam");
+        // Upload assignment
+        lms.uploadAssignment(session, "john_doe", "Assignment 1");
 
-        lms.uploadAssignment("john_doe", "Assignment 1");
+        // Add exam grade
+        lms.addExamGrade(session, "john_doe", "A");
 
-        lms.addExamGrade("john_doe", "A");
+        // Create the GUI and show it
+        LMS_GUI gui = new LMS_GUI(lms);
 
-        new LMS_GUI(lms);
     }
 }

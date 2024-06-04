@@ -66,3 +66,14 @@ class AcademicStaff extends User {
     }
 
 }
+
+class LMSAdmin extends User {
+    public LMSAdmin(String username, String password, String name) {
+        super(username, password, name);
+    }
+
+    @Override
+    public void login() {
+        System.out.println("LMS Admin " + this.getUsername() + " logged in.");
+    }
+}
