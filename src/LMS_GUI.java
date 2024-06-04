@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
+
 public class LMS_GUI {
     private LMS lms;
     private JFrame frame;
@@ -69,26 +70,26 @@ public class LMS_GUI {
                 User user = lms.authenticate(username, password);
                 if (user != null) {
                     if (user instanceof Student) {
-                        studentInfo.setText("Welcome, " + user.name + "\n\n");
+                        studentInfo.setText("Welcome, " + user.getName() + "\n\n");
                         studentInfo.append("Course Materials:\n");
                         for (String material : lms.getCourseMaterials()) {
                             studentInfo.append(material + "\n");
                         }
                         studentInfo.append("\nAssignments:\n");
                         for (Map.Entry<String, String> entry : lms.getAssignments().entrySet()) {
-                            if (entry.getKey().equals(username)) {
+                            if (entry.getKey().equals(user.getUsername())) {
                                 studentInfo.append(entry.getValue() + "\n");
                             }
                         }
                         studentInfo.append("\nGrades:\n");
                         for (Map.Entry<String, String> entry : lms.getExamGrades().entrySet()) {
-                            if (entry.getKey().equals(username)) {
+                            if (entry.getKey().equals(user.getUsername())) {
                                 studentInfo.append(entry.getValue() + "\n");
                             }
                         }
                         cardLayout.show(mainPanel, "Student");
                     } else if (user instanceof AcademicStaff) {
-                        staffInfo.setText("Welcome, " + user.name + "\n\n");
+                        staffInfo.setText("Welcome, " + user.getName() + "\n\n");
                         staffInfo.append("Course Materials:\n");
                         for (String material : lms.getCourseMaterials()) {
                             staffInfo.append(material + "\n");
@@ -118,4 +119,16 @@ public class LMS_GUI {
                 cardLayout.show(mainPanel, "Login");
             }
         });
-    }}
+
+    }
+
+    public static void main(String[] args) {
+        // Sample usage
+        LMS lms = new LMS();
+        User student = new Student("student1", "password123", "John Doe");
+        lms.addUser(student);
+
+        // Create the GUI and show it
+        LMS_GUI gui = new LMS_GUI(lms);
+    }
+}

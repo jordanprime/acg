@@ -1,10 +1,11 @@
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+
 abstract class User {
-    String username;
-    String hashedPassword;
-    String name;
+    private String username;  // Made private
+    private String hashedPassword;  // Made private
+    private String name;  // Made private
 
     public User(String username, String password, String name) {
         this.username = username;
@@ -31,6 +32,15 @@ abstract class User {
     public void logout() {
         System.out.println(name + " logged out.");
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getName() {
+        return name;
+    }
+
 }
 
 class Student extends User {
@@ -40,8 +50,9 @@ class Student extends User {
 
     @Override
     public void login() {
-        System.out.println("Student " + name + " logged in.");
+        System.out.println("Student " + this.getUsername() + " logged in.");
     }
+
 }
 
 class AcademicStaff extends User {
@@ -51,6 +62,7 @@ class AcademicStaff extends User {
 
     @Override
     public void login() {
-        System.out.println("Academic Staff " + name + " logged in.");
+        System.out.println("Academic Staff " + this.getUsername() + " logged in.");
     }
+
 }
