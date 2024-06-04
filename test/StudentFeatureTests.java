@@ -67,53 +67,39 @@ public class StudentFeatureTests {
 
     }
 
-    ///////////
+    @Test
+    @DisplayName("Adding an exam grade for a student with student authentication.")
+    void studentAddExamGrade() {
 
-//    @Test
-//    @DisplayName("Adding an exam grade for a student without authentication.")
-//    void anonymousAddExamGrade() {
-//
-//        String username = "john_doe";
-//        LMS lms = new LMS();
-//
-//        IllegalStateException thrown = assertThrows(
-//                IllegalStateException.class,
-//                () -> lms.addExamGrade(null, username, "HD")
-//        );
-//
-//        assertEquals(thrown.getMessage(), "Invalid session.");
-//
-//    }
-//
-//    @Test
-//    @DisplayName("Getting all exam grades without authentication.")
-//    void anonymousGetGrades() {
-//
-//        LMS lms = new LMS();
-//
-//        IllegalStateException thrown = assertThrows(
-//                IllegalStateException.class,
-//                () -> lms.getExamGrades(null)
-//        );
-//
-//        assertEquals(thrown.getMessage(), "Invalid session.");
-//
-//    }
-//
-//    @Test
-//    @DisplayName("Getting all assignments without authentication.")
-//    void anonymousGetAssignments() {
-//
-//        LMS lms = new LMS();
-//
-//        IllegalStateException thrown = assertThrows(
-//                IllegalStateException.class,
-//                () -> lms.getAssignments(null)
-//        );
-//
-//        assertEquals(thrown.getMessage(), "Invalid session.");
-//
-//    }
+        String username = "john_doe";
+        LMS lms = new LMS();
+        Session session = lms.authenticate("john_doe", "password123");
+
+        IllegalStateException thrown = assertThrows(
+                IllegalStateException.class,
+                () -> lms.addExamGrade(session, username, "HD")
+        );
+
+        assertEquals(thrown.getMessage(), "Only LMS Admin or Academic Staff can add exam grades.");
+
+    }
+
+    @Test
+    @DisplayName("Getting all assignments with student authentication.")
+    void studentGetAssignments() {
+
+        LMS lms = new LMS();
+        Session session = lms.authenticate("john_doe", "password123");
+
+        try {
+            lms.getAssignments(session);
+        } catch (Exception e) {
+            return;
+        }
+
+        fail("Currently retrieves all student assignments (not just the authenticated student) which is not desirable.");
+
+    }
 
     @Test
     @DisplayName("Uploading an assignment with student authentication.")
