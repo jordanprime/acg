@@ -57,70 +57,68 @@ public class LMS {
     }
 
     public void addCourseMaterial(Session session, String material) {
-        if (validateSession(session)) {
-            courseMaterials.add(material);
-        } else {
-            System.out.println("Invalid session.");
+        if (!validateSession(session)) {
+            throw new IllegalStateException("Invalid session.");
         }
-    }
-
-    public List<String> getCourseMaterials(Session session) {
-        if (validateSession(session)) {
-            return courseMaterials;
-        } else {
-            System.out.println("Invalid session.");
-            return Collections.emptyList();
+        if (!(session.getUser() instanceof LMSAdmin) && !(session.getUser() instanceof AcademicStaff)) {
+            throw new IllegalStateException("Only LMS Admin or Academic Staff can add course materials.");
         }
+        courseMaterials.add(material);
     }
 
     public void addEventToCalendar(Session session, String date, String event) {
-        if (validateSession(session)) {
-            academicCalendar.put(date, event);
-        } else {
-            System.out.println("Invalid session.");
+        if (!validateSession(session)) {
+            throw new IllegalStateException("Invalid session.");
         }
-    }
-
-    public Map<String, String> getAcademicCalendar(Session session) {
-        if (validateSession(session)) {
-            return academicCalendar;
-        } else {
-            System.out.println("Invalid session.");
-            return Collections.emptyMap();
+        if (!(session.getUser() instanceof LMSAdmin) && !(session.getUser() instanceof AcademicStaff)) {
+            throw new IllegalStateException("Only LMS Admin or Academic Staff can add events to the calendar.");
         }
-    }
-
-    public void uploadAssignment(Session session, String studentUsername, String assignment) {
-        if (validateSession(session)) {
-            assignments.put(studentUsername, assignment);
-        } else {
-            System.out.println("Invalid session.");
-        }
-    }
-
-    public Map<String, String> getAssignments(Session session) {
-        if (validateSession(session)) {
-            return assignments;
-        } else {
-            System.out.println("Invalid session.");
-            return Collections.emptyMap();
-        }
+        academicCalendar.put(date, event);
     }
 
     public void addExamGrade(Session session, String studentUsername, String grade) {
-        if (validateSession(session)) {
-            examGrades.put(studentUsername, grade);
-        } else {
-            System.out.println("Invalid session.");
+        if (!validateSession(session)) {
+            throw new IllegalStateException("Invalid session.");
         }
+        if (!(session.getUser() instanceof LMSAdmin) && !(session.getUser() instanceof AcademicStaff)) {
+            throw new IllegalStateException("Only LMS Admin or Academic Staff can add exam grades.");
+        }
+        examGrades.put(studentUsername, grade);
+    }
+
+    public List<String> getCourseMaterials(Session session) {
+        if (!validateSession(session)) {
+            throw new IllegalStateException("Invalid session.");
+        }
+        return courseMaterials;
+    }
+
+    public Map<String, String> getAcademicCalendar(Session session) {
+        if (!validateSession(session)) {
+            throw new IllegalStateException("Invalid session.");
+        }
+        return academicCalendar;
+    }
+
+    public void uploadAssignment(Session session, String studentUsername, String assignment) {
+        if (!validateSession(session)) {
+            throw new IllegalStateException("Invalid session.");
+        }
+        assignments.put(studentUsername, assignment);
+    }
+
+    public Map<String, String> getAssignments(Session session) {
+        if (!validateSession(session)) {
+            throw new IllegalStateException("Invalid session.");
+        }
+        return assignments;
     }
 
     public Map<String, String> getExamGrades(Session session) {
-        if (validateSession(session)) {
-            return examGrades;
-        } else {
-            System.out.println("Invalid session.");
-            return Collections.emptyMap();
+        if (!validateSession(session)) {
+            throw new IllegalStateException("Invalid session.");
         }
+        return examGrades;
     }
+
 }
