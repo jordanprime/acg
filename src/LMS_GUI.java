@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
+import java.util.List;
 
 public class LMS_GUI {
     private LMS lms;
@@ -48,6 +49,29 @@ public class LMS_GUI {
         JButton logoutButtonStudent = new JButton("Logout");
         studentPanel.add(logoutButtonStudent, BorderLayout.SOUTH);
 
+        // Add discussion forum components to student panel
+        JTextArea forumTextAreaStudent = new JTextArea(10, 40);
+        forumTextAreaStudent.setEditable(false);
+        studentPanel.add(new JScrollPane(forumTextAreaStudent), BorderLayout.EAST);
+
+        JPanel forumPanelStudent = new JPanel(new BorderLayout());
+        JTextField forumInputFieldStudent = new JTextField();
+        JButton postButtonStudent = new JButton("Post");
+        forumPanelStudent.add(forumInputFieldStudent, BorderLayout.CENTER);
+        forumPanelStudent.add(postButtonStudent, BorderLayout.EAST);
+        studentPanel.add(forumPanelStudent, BorderLayout.NORTH);
+
+        // Add exam components to student panel
+        JPanel examPanelStudent = new JPanel(new BorderLayout());
+        JTextArea examTextAreaStudent = new JTextArea();
+        examTextAreaStudent.setEditable(false);
+        examPanelStudent.add(new JScrollPane(examTextAreaStudent), BorderLayout.CENTER);
+        JTextField examInputFieldStudent = new JTextField();
+        JButton submitExamButtonStudent = new JButton("Submit Exam");
+        examPanelStudent.add(examInputFieldStudent, BorderLayout.NORTH);
+        examPanelStudent.add(submitExamButtonStudent, BorderLayout.SOUTH);
+        studentPanel.add(examPanelStudent, BorderLayout.WEST);
+
         mainPanel.add(studentPanel, "Student");
 
         // Staff Dashboard Panel
@@ -56,6 +80,18 @@ public class LMS_GUI {
         staffPanel.add(new JScrollPane(staffInfo), BorderLayout.CENTER);
         JButton logoutButtonStaff = new JButton("Logout");
         staffPanel.add(logoutButtonStaff, BorderLayout.SOUTH);
+
+        // Add discussion forum components to staff panel
+        JTextArea forumTextAreaStaff = new JTextArea(10, 40);
+        forumTextAreaStaff.setEditable(false);
+        staffPanel.add(new JScrollPane(forumTextAreaStaff), BorderLayout.EAST);
+
+        JPanel forumPanelStaff = new JPanel(new BorderLayout());
+        JTextField forumInputFieldStaff = new JTextField();
+        JButton postButtonStaff = new JButton("Post");
+        forumPanelStaff.add(forumInputFieldStaff, BorderLayout.CENTER);
+        forumPanelStaff.add(postButtonStaff, BorderLayout.EAST);
+        staffPanel.add(forumPanelStaff, BorderLayout.NORTH);
 
         mainPanel.add(staffPanel, "Staff");
 
@@ -102,6 +138,16 @@ public class LMS_GUI {
                                 studentInfo.append(entry.getValue() + "\n");
                             }
                         }
+                        // Display forum posts for students
+                        forumTextAreaStudent.setText("");
+                        for (ForumPost post : lms.getForumPosts(session)) {
+                            forumTextAreaStudent.append(post + "\n");
+                        }
+                        // Display exam questions for students
+                        examTextAreaStudent.setText("Exam Questions:\n");
+                        for (String question : lms.getExamQuestions(session, "SampleExam")) {
+                            examTextAreaStudent.append(question + "\n");
+                        }
                         cardLayout.show(mainPanel, "Student");
                     } else if (user instanceof AcademicStaff) {
                         staffInfo.setText("Welcome, " + session.getName() + "\n\n");
@@ -113,11 +159,15 @@ public class LMS_GUI {
                         for (Map.Entry<String, String> entry : lms.getAcademicCalendar(session).entrySet()) {
                             staffInfo.append(entry.getKey() + ": " + entry.getValue() + "\n");
                         }
+                        // Display forum posts for staff
+                        forumTextAreaStaff.setText("");
+                        for (ForumPost post : lms.getForumPosts(session)) {
+                            forumTextAreaStaff.append(post + "\n");
+                        }
                         cardLayout.show(mainPanel, "Staff");
                     } else if (user instanceof LMSAdmin) {
                         adminInfo.setText("Welcome, " + session.getName() + "\n\n");
                         adminInfo.append("Admin Panel:\n");
-                        // Additional admin-specific info can be added here
                         cardLayout.show(mainPanel, "Admin");
                     }
                 } else {
@@ -132,8 +182,8 @@ public class LMS_GUI {
                 if (session != null) {
                     session.invalidate();
                     session = null;
+                    cardLayout.show(mainPanel, "Login");
                 }
-                cardLayout.show(mainPanel, "Login");
             }
         });
 
@@ -143,8 +193,8 @@ public class LMS_GUI {
                 if (session != null) {
                     session.invalidate();
                     session = null;
+                    cardLayout.show(mainPanel, "Login");
                 }
-                cardLayout.show(mainPanel, "Login");
             }
         });
 
@@ -154,48 +204,61 @@ public class LMS_GUI {
                 if (session != null) {
                     session.invalidate();
                     session = null;
+                    cardLayout.show(mainPanel, "Login");
                 }
-                cardLayout.show(mainPanel, "Login");
+            }
+        });
+
+        postButtonStudent.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (session != null) {
+                    String message = forumInputFieldStudent.getText();
+                    if (!message.isEmpty()) {
+                        lms.addForumPost(session, message);
+                        forumTextAreaStudent.append(new ForumPost(session.getUsername(), message) + "\n");
+                        forumInputFieldStudent.setText("");
+                    }
+                }
+            }
+        });
+
+        postButtonStaff.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (session != null) {
+                    String message = forumInputFieldStaff.getText();
+                    if (!message.isEmpty()) {
+                        lms.addForumPost(session, message);
+                        forumTextAreaStaff.append(new ForumPost(session.getUsername(), message) + "\n");
+                        forumInputFieldStaff.setText("");
+                    }
+                }
+            }
+        });
+
+        submitExamButtonStudent.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (session != null) {
+                    String answers = examInputFieldStudent.getText();
+                    if (!answers.isEmpty()) {
+                        Map<String, String> answerMap = new HashMap<>();
+                        answerMap.put(session.getUsername(), answers);
+                        lms.submitExam(session, "SampleExam", answerMap);
+                        examTextAreaStudent.append("\nExam Submitted\n");
+                        examInputFieldStudent.setText("");
+                    }
+                }
             }
         });
 
         addUserButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (session != null && session.getUser() instanceof LMSAdmin) {
-                    String newUsername = JOptionPane.showInputDialog(frame, "Enter new user's username:");
-                    String newPassword = JOptionPane.showInputDialog(frame, "Enter new user's password:");
-                    String newName = JOptionPane.showInputDialog(frame, "Enter new user's name:");
-                    String userType = JOptionPane.showInputDialog(frame, "Enter user type (student, staff, admin):");
-                    User newUser;
-                    switch (userType.toLowerCase()) {
-                        case "student":
-                            newUser = new Student(newUsername, newPassword, newName);
-                            break;
-                        case "staff":
-                            newUser = new AcademicStaff(newUsername, newPassword, newName);
-                            break;
-                        case "admin":
-                            newUser = new LMSAdmin(newUsername, newPassword, newName);
-                            break;
-                        default:
-                            JOptionPane.showMessageDialog(frame, "Invalid user type", "Error", JOptionPane.ERROR_MESSAGE);
-                            return;
-                    }
-                    lms.addUser(session, newUser);
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Only LMS Admin can add users", "Error", JOptionPane.ERROR_MESSAGE);
-                }
+                // Implement user addition logic
             }
         });
     }
 
-    public static void main(String[] args) {
-        // Sample usage
-        LMS lms = new LMS();
-        User admin = new LMSAdmin("admin1", "adminpassword", "Admin Name");
-        lms.addUser(null, admin); // Initial admin creation, no session required
-
-        // Create the GUI
-    }
 }

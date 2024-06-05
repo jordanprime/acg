@@ -85,26 +85,4 @@ class LMSAuthenticationTests {
 
     }
 
-//    @Test
-//    @DisplayName("test that re-authentication is required after 10 minutes of inactivity")
-//    void inactivityTimeout() {
-//
-//    }
-
-
-//    @Test
-//    @DisplayName("Test that a session can be invalidated (logout)")
-//    void invalidateSession() {
-//
-//        String adminUsername = "admin";
-//        String adminPassword = "password";
-//        LMS lms = new LMS();
-//        Session session = lms.authenticate(adminUsername, adminPassword);
-//        session.invalidate();
-//
-//        // Now try do something now the session is invalid.
-//        assertT(lms.validateSession());
-//
-//    }
-
 }

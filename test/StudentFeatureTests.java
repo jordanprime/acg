@@ -3,6 +3,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class StudentFeatureTests {
@@ -114,6 +116,23 @@ public class StudentFeatureTests {
     }
 
     @Test
+    @DisplayName("A mischievous student overrides the username with a different student and uploads an assignment for them. Ohh ohhhh.")
+    void studentUploadAssignmentForOtherStudent() {
+
+        LMS lms = new LMS();
+        Session session = lms.authenticate("john_doe", "password123");
+
+        try {
+            lms.uploadAssignment(session, "naughtystudentsabotagingsomeotherstudenthere", "Assignment 6");
+        } catch (Exception e) {
+            return;
+        }
+
+        fail("Student can upload an assignment for another student by overriding the student username parameter. Ohhh ohhhh.");
+
+    }
+
+    @Test
     @DisplayName("Add and get academic calendar with student authentication.")
     void studentAcademicCalendar() {
 
@@ -150,6 +169,73 @@ public class StudentFeatureTests {
                 () -> assertDoesNotThrow(() -> lms.getCourseMaterials(session)),
                 () -> assertEquals("[]", lms.getCourseMaterials(session).toString())
         );
+
+    }
+
+    @Test
+    @DisplayName("get forum post details as a student.")
+    void getForumPostDetails() {
+
+        LMS lms = new LMS();
+        Session session = lms.authenticate("john_doe", "password123");
+
+        assertAll("Multiple assertions",
+                () -> assertEquals("[]", lms.getForumPosts(session).toString()),
+                () -> assertDoesNotThrow(() -> lms.addForumPost(session,"A very important public post on the forum"))
+        );
+
+    }
+
+    @Test
+    @DisplayName("Add and get a forum post as a student.")
+    void addForumPost() {
+
+        LMS lms = new LMS();
+        Session session = lms.authenticate("john_doe", "password123");
+
+        lms.addForumPost(session,"A very important public post on the forum");
+        List<ForumPost> posts = lms.getForumPosts(session);
+        ForumPost post = posts.get(0);
+
+        assertAll("Multiple assertions",
+                () -> assertEquals("john_doe", post.getUsername()),
+                () -> assertEquals("A very important public post on the forum", post.getMessage())
+        );
+
+    }
+
+
+    @Test
+    @DisplayName("Get exam questions from an exam that doesn't exist.")
+    void getExamQuestions() {
+
+        LMS lms = new LMS();
+        Session session = lms.authenticate("john_doe", "password123");
+
+        try {
+            lms.getExamQuestions(session, "A Fake Exam Name");
+        } catch (Exception e) {
+            return;
+        }
+
+        fail("A student has tried to retrieve an exam that doesn't exist");
+
+    }
+
+    @Test
+    @DisplayName("Get exam submissions as a student (shouldnt be able to get other students)")
+    void getExamSubmissions() {
+
+        LMS lms = new LMS();
+        Session session = lms.authenticate("john_doe", "password123");
+
+        try {
+            lms.getExamSubmissions(session, "A Fake Exam Name");
+        } catch (Exception e) {
+            return;
+        }
+
+        fail("A student has tried to retrieve all exam submissions and this has succeeded without an error being thrown");
 
     }
 

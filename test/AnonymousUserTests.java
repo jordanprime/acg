@@ -134,4 +134,27 @@ public class AnonymousUserTests {
 
     }
 
+    @Test
+    @DisplayName("Add and get a forum post as an anonymous user.")
+    void addForumPost() {
+
+        LMS lms = new LMS();
+
+        IllegalStateException thrown1 = assertThrows(
+                IllegalStateException.class,
+                () -> lms.getForumPosts(null)
+        );
+
+        IllegalStateException thrown2 = assertThrows(
+                IllegalStateException.class,
+                () -> lms.addForumPost(null,"A very important public post on the forum")
+        );
+
+        assertAll("Multiple assertions",
+                () -> assertEquals(thrown1.getMessage(), "Invalid session."),
+                () -> assertEquals(thrown2.getMessage(), "Invalid session.")
+        );
+
+    }
+
 }
