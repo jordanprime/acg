@@ -7,6 +7,9 @@ public class LMS {
     private Map<String, String> assignments;
     private Map<String, String> examGrades;
     private Map<String, Session> activeSessions;
+    private Map<String, List<String>> examQuestions;
+    private Map<String, Map<String, String>> examSubmissions;
+    private List<ForumPost> forumPosts;
 
     public LMS() {
         users = new HashMap<>();
@@ -15,6 +18,9 @@ public class LMS {
         assignments = new HashMap<>();
         examGrades = new HashMap<>();
         activeSessions = new HashMap<>();
+        examQuestions = new HashMap<>();
+        examSubmissions = new HashMap<>();
+        forumPosts = new ArrayList<>();
         users.put("admin", new LMSAdmin("admin", "password", "Admin Name")); // Initial admin user
         users.put("john_doe", new Student("john_doe", "password123", "John Doe")); // Initial test student
         users.put("prof_smith", new AcademicStaff("prof_smith", "password456", "Prof. Smith")); // Initial test academic/staff
@@ -119,6 +125,60 @@ public class LMS {
             throw new IllegalStateException("Invalid session.");
         }
         return examGrades;
+    }
+
+    // New methods for exams
+    public void addExam(Session session, String examName, List<String> questions) {
+        if (!validateSession(session)) {
+            throw new IllegalStateException("Invalid session.");
+        }
+        if (!(session.getUser() instanceof LMSAdmin) && !(session.getUser() instanceof AcademicStaff)) {
+            throw new IllegalStateException("Only LMS Admin or Academic Staff can add exams.");
+        }
+        examQuestions.put(examName, questions);
+    }
+
+    public List<String> getExamQuestions(Session session, String examName) {
+        if (!validateSession(session)) {
+            throw new IllegalStateException("Invalid session.");
+        }
+        return examQuestions.getOrDefault(examName, new ArrayList<>());
+    }
+
+    public void submitExam(Session session, String examName, Map<String, String> answers) {
+        if (!validateSession(session)) {
+            throw new IllegalStateException("Invalid session.");
+        }
+        if (!(session.getUser() instanceof Student)) {
+            throw new IllegalStateException("Only students can submit exams.");
+        }
+        String studentUsername = session.getUsername();
+        examSubmissions.putIfAbsent(examName, new HashMap<>());
+        examSubmissions.get(examName).put(studentUsername, answers.toString());
+    }
+
+    public Map<String, String> getExamSubmissions(Session session, String examName) {
+        if (!validateSession(session)) {
+            throw new IllegalStateException("Invalid session.");
+        }
+        return examSubmissions.getOrDefault(examName, new HashMap<>());
+    }
+
+    public void addForumPost(Session session, String message) {
+        if (!validateSession(session)) {
+            throw new IllegalStateException("Invalid session.");
+        }
+        if (!(session.getUser() instanceof AcademicStaff) && !(session.getUser() instanceof Student)) {
+            throw new IllegalStateException("Only Academic Staff or Students can post in the forum.");
+        }
+        forumPosts.add(new ForumPost(session.getUsername(), message));
+    }
+
+    public List<ForumPost> getForumPosts(Session session) {
+        if (!validateSession(session)) {
+            throw new IllegalStateException("Invalid session.");
+        }
+        return forumPosts;
     }
 
 }

@@ -1,3 +1,4 @@
+import java.util.*;
 public class Main {
 
     // Learning Management System
@@ -39,6 +40,14 @@ public class Main {
 
         // Add exam grade
         lms.addExamGrade(session, "john_doe", "A");
+
+        // Sample exam
+        List<String> sampleExamQuestions = Arrays.asList(
+                "Question 1: What is the capital of France?",
+                "Question 2: What is 2 + 2?",
+                "Question 3: Who wrote 'To Kill a Mockingbird'?"
+        );
+        lms.addExam(session, "SampleExam", sampleExamQuestions);
 
         // Create the GUI and show it
         LMS_GUI gui = new LMS_GUI(lms);
